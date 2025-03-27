@@ -25,7 +25,8 @@ from langchain.memory import ConversationBufferMemory
 
 from sentence_transformers import SentenceTransformer, util
 
-chroma_client = chromadb.PersistentClient(path="./chroma_db_5")
+chroma_client = chromadb.PersistentClient(path="./chroma_db")
+
 try:
     collection = chroma_client.get_collection(name="ai_knowledge_base")
 except chromadb.errors.InvalidCollectionException:
@@ -39,7 +40,7 @@ def extract_text_from_pdf(pdf_path):
     """Extract text from a PDF file using PyPDF2."""
     text = ""
     with open(pdf_path, 'rb') as file:
-        reader = PyPDF2.PdfReader(file)
+        reader = PdfReader(file)  # (Correct usage)
         for page in reader.pages:
             page_text = page.extract_text()
             if page_text:
@@ -80,10 +81,8 @@ if __name__ == "__main__":
 
 # ----------------------------------------------------------------------
 # ✅ Initialize Embeddings & ChromaDB
-# ----------------------------------------------------------------------
-embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-chroma_client = chromadb.PersistentClient(path="./chroma_db_4")
-collection = chroma_client.get_or_create_collection(name="ai_knowledge_base")
+
+chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
 # ----------------------------------------------------------------------
 # ✅ Initialize Memory & Chat Model
